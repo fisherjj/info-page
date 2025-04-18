@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>معلومات جهازك</title>
+  <style>
+    body { font-family: sans-serif; background: #121212; color: #eee; padding: 20px; }
+    pre { background: #1e1e1e; padding: 15px; border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <h2>معلومات جهازك 👇</h2>
+  <pre id="info">جاري التحميل...</pre>
+
+  <script>
+    async function getInfo() {
+      try {
+        const ipRes = await fetch("https://api.ipify.org?format=json");
+        const ipData = await ipRes.json();
+
+        const locationRes = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
+        const locationData = await locationRes.json();
+
+        const info = {
+          "📱 نظام التشغيل": navigator.platform,
+          "🌐 نوع المتصفح": navigator.userAgent,
+          "🌍 اللغة": navigator.language,
+          "🕓 التوقيت المحلي": new Date().toString(),
+          "📏 حجم الشاشة": `${screen.width}x${screen.height}`,
+          "📡 IP": ipData.ip,
+          "🗺️ الموقع": {
+            الدولة: locationData.country_name,
+            المدينة: locationData.city,
+            المنطقة: locationData.region,
+            مزود_الخدمة: locationData.org
+          }
+        };
+
+        document.getElementById("info").textContent = JSON.stringify(info, null, 2);
+      } catch (err) {
+        document.getElementById("info").textContent = "حدث خطأ أثناء جلب المعلومات.";
+        console.error(err);
+      }
+    }
+
+    getInfo();
+  </script>
+</body>
+</html>
